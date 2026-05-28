@@ -791,13 +791,17 @@
       const storeName = params.get('store_name') || '카페 미정';
       const nickname  = params.get('nickname')   || '닉네임';
       const code      = params.get('code')       || '0000-0000';
+      const segment   = params.get('segment')    || '';
 
       document.querySelectorAll('[data-store]').forEach(el => { el.textContent = storeName; });
       document.querySelectorAll('[data-nickname]').forEach(el => { el.textContent = nickname; });
       document.querySelectorAll('[data-code]').forEach(el => { el.textContent = code; });
 
       const STAFF_GUIDE_BASE = window.location.origin + window.location.pathname.replace(/customer-guide.*$/, 'staff-guide.html');
-      const staffUrl = `${STAFF_GUIDE_BASE}?store_name=${encodeURIComponent(storeName)}&nickname=${encodeURIComponent(nickname)}&code=${encodeURIComponent(code)}`;
+      let staffUrl = `${STAFF_GUIDE_BASE}?store_name=${encodeURIComponent(storeName)}&nickname=${encodeURIComponent(nickname)}&code=${encodeURIComponent(code)}`;
+      if (segment) {
+        staffUrl += `&segment=${encodeURIComponent(segment)}`;
+      }
 
       try {
         if (typeof QRCode !== 'undefined' && QRCode.toCanvas) {
