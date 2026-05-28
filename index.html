@@ -856,8 +856,9 @@
       track('PAGE_VIEW');
 
       // ─── QR 코드 생성 ───
-      const STAFF_GUIDE_BASE = window.location.origin + window.location.pathname.replace(/customer-guide.*$/, 'staff-guide.html');
-      let staffUrl = `${STAFF_GUIDE_BASE}?store_name=${encodeURIComponent(storeName)}&nickname=${encodeURIComponent(nickname)}&code=${encodeURIComponent(code)}&from=qr`;
+      // 알바 페이지 도메인 (배포된 깃허브 페이지 URL)
+      const STAFF_GUIDE_URL = 'https://paytalab-m.github.io/part_timer_event-part/';
+      let staffUrl = `${STAFF_GUIDE_URL}?store_name=${encodeURIComponent(storeName)}&nickname=${encodeURIComponent(nickname)}&code=${encodeURIComponent(code)}&from=qr`;
       if (segment) {
         staffUrl += `&segment=${encodeURIComponent(segment)}`;
       }
