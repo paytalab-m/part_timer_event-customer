@@ -787,20 +787,82 @@
 
   <script>
     (function() {
-      const params = new URLSearchParams(window.location.search);
-      const storeName = params.get('store_name') || '카페 미정';
-      const nickname  = params.get('nickname')   || '닉네임';
-      const code      = params.get('code')       || '0000-0000';
-      const segment   = params.get('segment')    || '';
+      // ══════════════════════════════════════════════════
+      //  Apps Script 트래킹 URL (배포 후 교체 필요)
+      // ══════════════════════════════════════════════════
+      const TRACKING_URL = 'https://script.google.com/macros/s/AKfycbyKfcr1Z8YotiTvyD7H7sk32XligPtwzkeISAlYA6Q52JhwmS8mJcZRfaE0ae2UtKC1pw/exec';
 
+      // ─── URL 파라미터 파싱 ───
+      const params = new URLSearchParams(window.location.search);
+      const storeName    = params.get('store_name')    || '카페 미정';
+      const nickname     = params.get('nickname')      || '닉네임';
+      const code         = params.get('code')          || '0000-0000';
+      const segment      = params.get('segment')       || '';
+      const customerName = params.get('customer_name') || ''; // 트래킹만, 노출 X
+
+      // ─── 세션/사용자 ID ───
+      const sessionId = 'S_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
+      let userId = '';
+      try {
+        userId = localStorage.getItem('po_user_id');
+        if (!userId) {
+          userId = 'U_' + Date.now() + '_' + Math.random().toString(36).substr(2, 8);
+          localStorage.setItem('po_user_id', userId);
+        }
+      } catch (e) {
+        userId = 'U_temp_' + Math.random().toString(36).substr(2, 8);
+      }
+
+      // ─── 변수 주입 ───
       document.querySelectorAll('[data-store]').forEach(el => { el.textContent = storeName; });
       document.querySelectorAll('[data-nickname]').forEach(el => { el.textContent = nickname; });
       document.querySelectorAll('[data-code]').forEach(el => { el.textContent = code; });
 
+      // ─── 트래킹 함수 ───
+      function track(eventName, extra) {
+        if (!TRACKING_URL) return; // URL 미설정 시 조용히 무시
+        const payload = {
+          page: 'customer',
+          sessionId: sessionId,
+          userId: userId,
+          event: eventName,
+          storeName: storeName,
+          nickname: nickname,
+          code: code,
+          segment: segment,
+          customerName: customerName,
+          referrer: document.referrer || '',
+          userAgent: navigator.userAgent || '',
+          timestamp: new Date().toISOString(),
+          extra: extra || {}
+        };
+        try {
+          const data = JSON.stringify(payload);
+          if (navigator.sendBeacon) {
+            const blob = new Blob([data], { type: 'text/plain;charset=utf-8' });
+            if (navigator.sendBeacon(TRACKING_URL, blob)) return;
+          }
+          fetch(TRACKING_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: data,
+            keepalive: true
+          });
+        } catch (e) { /* silent */ }
+      }
+
+      // ─── 이벤트: 페이지 진입 ───
+      track('PAGE_VIEW');
+
+      // ─── QR 코드 생성 ───
       const STAFF_GUIDE_BASE = window.location.origin + window.location.pathname.replace(/customer-guide.*$/, 'staff-guide.html');
-      let staffUrl = `${STAFF_GUIDE_BASE}?store_name=${encodeURIComponent(storeName)}&nickname=${encodeURIComponent(nickname)}&code=${encodeURIComponent(code)}`;
+      let staffUrl = `${STAFF_GUIDE_BASE}?store_name=${encodeURIComponent(storeName)}&nickname=${encodeURIComponent(nickname)}&code=${encodeURIComponent(code)}&from=qr`;
       if (segment) {
         staffUrl += `&segment=${encodeURIComponent(segment)}`;
+      }
+      if (customerName) {
+        staffUrl += `&customer_name=${encodeURIComponent(customerName)}`;
       }
 
       try {
@@ -817,14 +879,16 @@
               return;
             }
             document.getElementById('qrcode').appendChild(canvas);
+            track('QR_RENDERED');
           });
         } else {
-          // 폴백: Google Charts QR API
+          // 폴백: 외부 API
           const img = document.createElement('img');
           img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=168x168&data=' + encodeURIComponent(staffUrl);
           img.width = 168;
           img.height = 168;
           img.alt = 'QR 코드';
+          img.onload = function() { track('QR_RENDERED', { fallback: true }); };
           document.getElementById('qrcode').appendChild(img);
         }
       } catch (e) {
