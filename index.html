@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#FFFAEF">
+  <title>알바리카노 쿠폰이 도착했어요</title>
+
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+
+  <style>
+    :root {
+      --bg:          #FFF7E6;
+      --bg-soft:     #FFFAEF;
+
+      --card:        #FFFFFF;
+      --outer-card:  #FFF5D8;
+
+      --line-soft:   #F0E8D6;
+
+      --text-900:    #2A2A2A;
+      --text-700:    #4F4F4F;
+      --text-500:    #888888;
+      --text-400:    #B5B5B5;
+
+      --accent:        #FF6B00;
+      --accent-light:  #FF8A3C;
+      --accent-soft:   #FFE9D6;
+      --accent-faded:  #FFF1E5;
+
+      --yellow:        #FFB800;
+      --yellow-soft:   #FFE9A8;
+
+      --tag-bg:        #EFEFEF;
+      --tag-text:      #6E6E6E;
+
+      --num-bg:        #2A2A2A;
+      --num-text:      #FFFFFF;
+
+      --r-card:    20px;
+      --r-outer:   24px;
+      --r-tag:     6px;
+      --r-btn:     14px;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      color: var(--text-900);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      letter-spacing: -0.025em;
+      background: #FFECB3;
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 420px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: #FFECB3;
+      padding: 0 0 120px;
+      position: relative;
+    }
+
+    /* ============ 상단 흰색 영역 (헤더+히어로 텍스트+일러스트) ============ */
+    .top-white {
+      background: #FFFFFF;
+      padding-bottom: 0;
+      position: relative;
+    }
+    /* 흰 영역에서 노란 배경으로 자연스럽게 전환 (일러스트 아래 영역에서) */
+    .top-white::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 140px;
+      background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,236,179,0.5) 50%, #FFECB3 100%);
+      pointer-events: none;
+    }
+
+    /* ============ 상단 네비 ============ */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 20px;
+      position: relative;
+      min-height: 52px;
+    }
+    .topbar .back {
+      position: absolute;
+      left: 16px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      padding: 0;
+    }
+    .topbar .back svg {
+      width: 22px;
+      height: 22px;
+      stroke: var(--text-900);
+      stroke-width: 2.2;
+      fill: none;
+    }
+    .topbar h1 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-900);
+    }
+
+    /* ============ 히어로 헤드라인 ============ */
+    .hero-head {
+      padding: 16px 24px 24px;
+    }
+    .hero-title {
+      margin: 0;
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1.4;
+      letter-spacing: -0.035em;
+      color: var(--text-900);
+    }
+    .hero-title .accent { color: var(--accent); font-weight: 800; }
+
+    /* ============ 히어로 일러스트 ============ */
+    .hero-illust {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 24px 32px;
+      position: relative;
+      z-index: 2;
+    }
+    .hero-illust svg {
+      width: 220px;
+      height: 220px;
+      filter: drop-shadow(0 16px 30px rgba(196, 110, 30, 0.22));
+      animation: float 3.6s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* ============ 컨테이너 ============ */
+    .content {
+      padding: 0 18px;
+    }
+
+    /* ============ 카드 ============ */
+    .card {
+      background: var(--card);
+      border-radius: var(--r-card);
+      padding: 26px 24px;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 20px rgba(255, 143, 0, 0.20);
+    }
+    .card-title {
+      margin: 0 0 6px;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-900);
+      letter-spacing: -0.025em;
+    }
+    .card-sub {
+      margin: 0;
+      font-size: 14px;
+      color: var(--text-500);
+      font-weight: 400;
+      line-height: 1.55;
+    }
+
+    /* ============ 쿠폰 카드 (정보) ============ */
+    .coupon-card h3 {
+      margin: 0 0 6px;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-900);
+      padding-right: 130px;
+    }
+    .coupon-card .coupon-sub {
+      margin: 0 0 18px;
+      font-size: 14px;
+      color: var(--text-500);
+      padding-right: 130px;
+    }
+    .coupon-card .info-rows {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .coupon-card .info-rows li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      font-size: 15px;
+      border-bottom: 1px solid var(--line-soft);
+    }
+    .coupon-card .info-rows li:last-child {
+      border-bottom: none;
+      padding-bottom: 4px;
+    }
+    .coupon-card .label {
+      color: var(--text-500);
+      font-weight: 500;
+    }
+    .coupon-card .value {
+      color: var(--text-900);
+      font-weight: 700;
+      text-align: right;
+      max-width: 60%;
+    }
+    .coupon-card .value.accent {
+      color: var(--accent);
+    }
+
+    /* ============ STEP 카드 (3단계) ============ */
+    .steps-card h3 {
+      margin: 0 0 18px;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-900);
+    }
+    .step-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line-soft);
+    }
+    .step-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .step-row:first-of-type {
+      padding-top: 0;
+    }
+
+    .step-row-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--accent-faded);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-left: auto;
+    }
+    .step-row-icon svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    /* 쿠폰 카드 우측 작은 일러스트 */
+    .coupon-card {
+      position: relative;
+    }
+    .coupon-mini {
+      position: absolute;
+      top: 22px;
+      right: 18px;
+      width: 120px;
+      height: 60px;
+    }
+
+    /* QR 카드 위 손가락 아이콘 */
+    .qr-pointer {
+      width: 40px;
+      height: 40px;
+      margin: 0 auto 8px;
+      display: block;
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--num-bg);
+      color: var(--num-text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .step-text {
+      flex: 1;
+      font-size: 15.5px;
+      color: var(--text-900);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    /* ============ QR 카드 ============ */
+    .qr-card {
+      text-align: center;
+      padding: 28px 24px 26px;
+    }
+    .qr-card .qr-tag {
+      display: inline-block;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 6px;
+      margin-bottom: 18px;
+    }
+    .qr-card h3 {
+      margin: 0 0 22px;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-900);
+    }
+    .qr-frame {
+      display: inline-block;
+      padding: 16px;
+      background: #fff;
+      border-radius: 14px;
+      border: 1px solid var(--line-soft);
+    }
+    #qrcode { line-height: 0; }
+    #qrcode img, #qrcode canvas { display: block; }
+
+    /* 말풍선 (QR 위) */
+    .speech-bubble {
+      position: relative;
+      display: block;
+      background: #FFF6D6;
+      border: 2px solid #2A2A2A;
+      border-radius: 16px;
+      padding: 14px 20px;
+      margin: 0 auto 22px;
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-900);
+      letter-spacing: -0.02em;
+      line-height: 1.5;
+      max-width: 240px;
+    }
+    .speech-bubble .accent {
+      color: var(--accent);
+    }
+    /* 말풍선 꼬리 (테두리) */
+    .speech-bubble::before {
+      content: '';
+      position: absolute;
+      bottom: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 11px solid transparent;
+      border-right: 11px solid transparent;
+      border-top: 12px solid #2A2A2A;
+    }
+    /* 말풍선 꼬리 (안쪽 색) */
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 9px solid transparent;
+      border-right: 9px solid transparent;
+      border-top: 10px solid #FFF6D6;
+    }
+
+    .qr-foot {
+      margin: 18px 0 0;
+      font-size: 14px;
+      color: var(--text-500);
+      line-height: 1.65;
+    }
+    .qr-foot strong { color: var(--text-900); font-weight: 700; }
+
+    /* ============ 상생 메시지 (흰색 카드) ============ */
+    .bonus-card {
+      background: var(--card);
+      padding: 24px 22px;
+      border-radius: var(--r-card);
+      margin-bottom: 14px;
+      box-shadow: 0 8px 20px rgba(255, 143, 0, 0.20);
+    }
+    .bonus-card-top {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .bonus-icon-svg {
+      flex-shrink: 0;
+      width: 72px;
+      height: 72px;
+    }
+    .bonus-text-wrap {
+      flex: 1;
+      min-width: 0;
+    }
+    .bonus-tag {
+      display: inline-block;
+      background: rgba(42, 42, 42, 0.08);
+      color: var(--text-900);
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    .bonus-text {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-900);
+      line-height: 1.65;
+    }
+    .bonus-text .accent {
+      color: var(--accent);
+      font-weight: 800;
+    }
+    .bonus-note {
+      margin: 12px 0 0 88px;
+      font-size: 12px;
+      color: var(--text-500);
+      font-weight: 500;
+    }
+
+    /* ============ FAQ ============ */
+    .faq-section {
+      margin-top: 26px;
+      padding: 0;
+    }
+    .faq-list {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 24px 20px;
+      box-shadow: 0 8px 20px rgba(255, 143, 0, 0.20);
+    }
+    .faq-list h2 {
+      margin: 0 0 18px 4px;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-900);
+      letter-spacing: -0.02em;
+    }
+    details.faq {
+      background: var(--card);
+      border: 1px solid #E5E5E5;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+    details.faq:last-child {
+      margin-bottom: 0;
+    }
+    details.faq summary {
+      cursor: pointer;
+      padding: 16px 18px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-900);
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+      letter-spacing: -0.02em;
+    }
+    details.faq summary::-webkit-details-marker { display: none; }
+    details.faq summary::after {
+      content: '';
+      width: 9px;
+      height: 9px;
+      border-right: 2px solid var(--text-400);
+      border-bottom: 2px solid var(--text-400);
+      transform: rotate(45deg);
+      transition: transform 0.2s;
+      margin-top: -3px;
+      flex-shrink: 0;
+      margin-left: 14px;
+    }
+    details.faq[open] summary::after {
+      transform: rotate(-135deg);
+      margin-top: 2px;
+    }
+    details.faq .faq-body {
+      padding: 0 18px 16px;
+      font-size: 13.5px;
+      color: var(--text-500);
+      line-height: 1.7;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- 상단 흰색 영역 -->
+    <div class="top-white">
+      <!-- 상단 네비 -->
+      <div class="topbar">
+        <button class="back" onclick="history.back()" aria-label="뒤로">
+          <svg viewBox="0 0 24 24"><polyline points="15 6 9 12 15 18"/></svg>
+        </button>
+        <h1>쿠폰 받는 방법</h1>
+      </div>
+
+      <!-- 히어로 헤드라인 -->
+      <section class="hero-head">
+        <h2 class="hero-title">
+          <span data-store>{매장명}</span>에서<br>
+          <span class="accent">아메리카노 100원 쿠폰</span><br>
+          받으실 수 있어요
+        </h2>
+      </section>
+
+      <!-- 히어로 일러스트 (아이스 음료) -->
+      <div class="hero-illust" aria-hidden="true">
+      <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="cup-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/>
+            <stop offset="100%" stop-color="#E8E0D0" stop-opacity="0.95"/>
+          </linearGradient>
+          <linearGradient id="coupon-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FFD84D"/>
+            <stop offset="100%" stop-color="#FFB800"/>
+          </linearGradient>
+          <linearGradient id="liquid-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#8B5A2B"/>
+            <stop offset="100%" stop-color="#5C3317"/>
+          </linearGradient>
+        </defs>
+
+        <!-- 그림자 -->
+        <ellipse cx="120" cy="218" rx="62" ry="6" fill="#000" opacity="0.10"/>
+
+        <!-- 아이스 컵 (테이크아웃 컵, 약간 사다리꼴) -->
+        <path d="M76 64 L70 200 Q70 210 82 210 L158 210 Q170 210 170 200 L164 64 Z"
+              fill="url(#cup-grad)" stroke="#2A2A2A" stroke-width="2.5" stroke-linejoin="round"/>
+
+        <!-- 컵 뚜껑 (돔형) -->
+        <path d="M70 64 Q70 50 120 50 Q170 50 170 64 L70 64 Z"
+              fill="#FFFFFF" stroke="#2A2A2A" stroke-width="2.5"/>
+        <ellipse cx="120" cy="64" rx="50" ry="6" fill="#FFFFFF" stroke="#2A2A2A" stroke-width="2.5"/>
+
+        <!-- 음료 (반투명 갈색) -->
+        <path d="M82 80 L78 196 Q78 204 86 204 L154 204 Q162 204 162 196 L158 80 Z"
+              fill="url(#liquid-grad)" opacity="0.85"/>
+
+        <!-- 얼음 큐브들 -->
+        <g stroke="#FFFFFF" stroke-width="1.5" fill="#FFFFFF" opacity="0.85">
+          <rect x="92" y="100" width="20" height="20" rx="3" transform="rotate(-12 102 110)"/>
+          <rect x="125" y="115" width="18" height="18" rx="3" transform="rotate(8 134 124)"/>
+          <rect x="100" y="140" width="22" height="22" rx="3" transform="rotate(15 111 151)"/>
+          <rect x="130" y="155" width="16" height="16" rx="3" transform="rotate(-10 138 163)"/>
+        </g>
+        <!-- 얼음 큐브 외곽선 -->
+        <g stroke="#2A2A2A" stroke-width="1.8" fill="none">
+          <rect x="92" y="100" width="20" height="20" rx="3" transform="rotate(-12 102 110)"/>
+          <rect x="125" y="115" width="18" height="18" rx="3" transform="rotate(8 134 124)"/>
+          <rect x="100" y="140" width="22" height="22" rx="3" transform="rotate(15 111 151)"/>
+          <rect x="130" y="155" width="16" height="16" rx="3" transform="rotate(-10 138 163)"/>
+        </g>
+
+        <!-- 빨대 -->
+        <rect x="135" y="14" width="8" height="60" rx="2" fill="#FF6B00" stroke="#2A2A2A" stroke-width="2"/>
+        <rect x="135" y="22" width="8" height="4" fill="#FFFFFF" opacity="0.6"/>
+        <rect x="135" y="42" width="8" height="4" fill="#FFFFFF" opacity="0.6"/>
+
+        <!-- 컵 라벨 (100원 쿠폰) - 하단에 배치 -->
+        <rect x="86" y="174" width="68" height="22" rx="5" fill="url(#coupon-grad)" stroke="#2A2A2A" stroke-width="2.5"/>
+        <text x="120" y="190" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="13" font-weight="900" fill="#2A2A2A">100원 쿠폰</text>
+
+        <!-- 작은 동전 (장식) -->
+        <circle cx="32" cy="120" r="14" fill="#FFB800" stroke="#2A2A2A" stroke-width="2.2"/>
+        <text x="32" y="125" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="13" font-weight="900" fill="#2A2A2A">₩</text>
+
+        <circle cx="208" cy="140" r="11" fill="#FF8A3C" stroke="#2A2A2A" stroke-width="2.2"/>
+        <text x="208" y="145" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="10" font-weight="900" fill="#FFFFFF">₩</text>
+
+        <!-- 반짝임 별 -->
+        <g fill="#FF6B00">
+          <circle cx="40" cy="60" r="3"/>
+          <circle cx="200" cy="50" r="3"/>
+          <circle cx="220" cy="92" r="2.5"/>
+          <circle cx="18" cy="170" r="2.5"/>
+          <circle cx="218" cy="190" r="2"/>
+        </g>
+
+        <!-- 차가운 효과선 (아이스 느낌) -->
+        <g stroke="#5DADE2" stroke-width="2" stroke-linecap="round" opacity="0.5">
+          <path d="M52 30 L52 38 M48 34 L56 34"/>
+          <path d="M192 28 L192 34 M189 31 L195 31"/>
+        </g>
+      </svg>
+    </div>
+    </div>
+    <!-- /상단 흰색 영역 -->
+
+    <!-- 본문 -->
+    <div class="content">
+
+      <!-- 쿠폰 정보 카드 -->
+      <section class="card coupon-card">
+        <svg class="coupon-mini" viewBox="0 0 140 70" xmlns="http://www.w3.org/2000/svg">
+          <!-- 그림자 -->
+          <path d="M14 18 L126 18 L126 30 Q120 30 120 40 Q120 50 126 50 L126 62 L14 62 L14 50 Q20 50 20 40 Q20 30 14 30 Z"
+                fill="#000" opacity="0.10" transform="translate(2 2)"/>
+          <!-- 쿠폰 본체 -->
+          <path d="M14 18 L126 18 L126 30 Q120 30 120 40 Q120 50 126 50 L126 62 L14 62 L14 50 Q20 50 20 40 Q20 30 14 30 Z"
+                fill="#FFD84D" stroke="#2A2A2A" stroke-width="2.5" stroke-linejoin="round"/>
+          <!-- 점선 분할 (가운데) -->
+          <line x1="70" y1="18" x2="70" y2="62" stroke="#2A2A2A" stroke-width="1.5" stroke-dasharray="3 2.5"/>
+          <!-- 좌측: 100원 -->
+          <text x="42" y="46" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="15" font-weight="900" fill="#2A2A2A">100원</text>
+          <!-- 우측: 쿠폰 -->
+          <text x="98" y="46" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="14" font-weight="900" fill="#2A2A2A">쿠폰</text>
+          <!-- 반짝임 -->
+          <circle cx="130" cy="10" r="2.5" fill="#FF6B00"/>
+          <circle cx="120" cy="6" r="1.8" fill="#FFB800"/>
+          <path d="M6 8 L9 11 M6 11 L9 8" stroke="#FFB800" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <h3>쿠폰 정보</h3>
+        <p class="coupon-sub">패스오더 첫 주문 시 사용 가능</p>
+        <ul class="info-rows">
+          <li>
+            <span class="label">사용 매장</span>
+            <span class="value" data-store>{매장명}</span>
+          </li>
+          <li>
+            <span class="label">챙겨준 알바</span>
+            <span class="value"><span data-nickname>{알바닉네임}</span> 알바</span>
+          </li>
+          <li>
+            <span class="label">쿠폰 내용</span>
+            <span class="value accent">아메리카노 100원 쿠폰</span>
+          </li>
+        </ul>
+      </section>
+
+      <!-- STEP 카드 -->
+      <section class="card steps-card">
+        <h3>3단계로 끝나요</h3>
+        <div class="step-row">
+          <span class="step-num">1</span>
+          <div class="step-text">매장에 방문해 주세요</div>
+          <div class="step-row-icon">
+            <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+              <!-- 매장 -->
+              <path d="M4 12 L14 4 L24 12 L24 24 L4 24 Z" fill="#FFFFFF" stroke="#2A2A2A" stroke-width="2" stroke-linejoin="round"/>
+              <rect x="11" y="16" width="6" height="8" fill="#FF6B00"/>
+              <path d="M2 12 L14 3 L26 12" fill="none" stroke="#2A2A2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+        <div class="step-row">
+          <span class="step-num">2</span>
+          <div class="step-text">알바생에게 아래 QR 코드를 보여주세요</div>
+          <div class="step-row-icon">
+            <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="4" width="8" height="8" fill="none" stroke="#2A2A2A" stroke-width="1.8"/>
+              <rect x="6" y="6" width="4" height="4" fill="#2A2A2A"/>
+              <rect x="16" y="4" width="8" height="8" fill="none" stroke="#2A2A2A" stroke-width="1.8"/>
+              <rect x="18" y="6" width="4" height="4" fill="#FF6B00"/>
+              <rect x="4" y="16" width="8" height="8" fill="none" stroke="#2A2A2A" stroke-width="1.8"/>
+              <rect x="6" y="18" width="4" height="4" fill="#2A2A2A"/>
+              <rect x="16" y="16" width="3" height="3" fill="#2A2A2A"/>
+              <rect x="21" y="16" width="3" height="3" fill="#2A2A2A"/>
+              <rect x="16" y="21" width="3" height="3" fill="#2A2A2A"/>
+              <rect x="21" y="21" width="3" height="3" fill="#FF6B00"/>
+            </svg>
+          </div>
+        </div>
+        <div class="step-row">
+          <span class="step-num">3</span>
+          <div class="step-text">패스오더 앱으로 첫 주문하면 완료</div>
+          <div class="step-row-icon">
+            <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+              <rect x="7" y="3" width="14" height="22" rx="2" fill="#FFFFFF" stroke="#2A2A2A" stroke-width="2"/>
+              <rect x="9" y="6" width="10" height="14" fill="#FFE9D6"/>
+              <circle cx="14" cy="22" r="1" fill="#2A2A2A"/>
+              <!-- 아이스 컵 -->
+              <path d="M11 9 L17 9 L16.5 18 L11.5 18 Z" fill="#8B5A2B" opacity="0.8" stroke="#2A2A2A" stroke-width="1"/>
+              <rect x="13" y="11" width="2" height="2" fill="#FFFFFF" opacity="0.9"/>
+              <rect x="11.5" y="14" width="2" height="2" fill="#FFFFFF" opacity="0.9"/>
+              <line x1="14" y1="6" x2="14" y2="9" stroke="#FF6B00" stroke-width="1.5"/>
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <!-- QR 카드 -->
+      <section class="card qr-card">
+        <span class="qr-tag">알바생에게 이 QR 코드를 보여주세요</span>
+        <div class="speech-bubble">
+          <span data-nickname>{알바닉네임}</span> 알바님,<br>
+          <span class="accent">QR 스캔해 주세요!</span>
+        </div>
+        <div class="qr-frame">
+          <div id="qrcode" aria-label="알바용 가이드 QR 코드"></div>
+        </div>
+        <p class="qr-foot">
+          <strong data-nickname>{알바닉네임}</strong> 알바생이 스캔하면<br>
+          쿠폰 발급 방법이 안내돼요
+        </p>
+      </section>
+
+      <!-- 상생 메시지 -->
+      <section class="bonus-card">
+        <div class="bonus-card-top">
+          <!-- 작은 돈가방 일러스트 -->
+          <svg class="bonus-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="32" cy="58" rx="22" ry="3" fill="#000" opacity="0.10"/>
+            <!-- 가방 본체 -->
+            <path d="M14 24 Q14 18 20 18 L44 18 Q50 18 50 24 L52 52 Q52 58 46 58 L18 58 Q12 58 12 52 Z"
+                  fill="#E89C4A" stroke="#2A2A2A" stroke-width="2"/>
+            <!-- 가방 윗부분 -->
+            <rect x="22" y="12" width="20" height="8" rx="2" fill="#2A2A2A"/>
+            <!-- ₩ 마크 -->
+            <circle cx="32" cy="40" r="11" fill="#FFD84D" stroke="#2A2A2A" stroke-width="2"/>
+            <text x="32" y="45" text-anchor="middle" font-family="Pretendard, sans-serif" font-size="13" font-weight="900" fill="#2A2A2A">₩</text>
+          </svg>
+          <div class="bonus-text-wrap">
+            <p class="bonus-text">
+              쿠폰을 사용하여 <span data-store>{매장명}</span>에서 패스오더 첫 주문을 하면 '<span data-nickname>{알바닉네임}</span>' 알바도 시급 <span class="accent">1,500원</span>이 추가로 지급돼요
+            </p>
+          </div>
+        </div>
+        <p class="bonus-note">※ 패스오더 100% 부담</p>
+      </section>
+
+      <!-- FAQ -->
+      <section class="faq-section">
+        <div class="faq-list">
+          <h2>자주 묻는 질문</h2>
+          <details class="faq">
+          <summary>쿠폰은 어디서 사용하나요?</summary>
+          <div class="faq-body">
+            쿠폰은 <span data-store>{매장명}</span>에서 패스오더 앱으로 첫 주문하실 때 사용 가능합니다.
+          </div>
+        </details>
+        <details class="faq">
+          <summary>쿠폰은 어떻게 받나요?</summary>
+          <div class="faq-body">
+            매장에 방문하셔서 알바생에게 이 페이지의 QR 코드를 보여주시면, 알바생이 쿠폰을 드릴거에요.
+          </div>
+        </details>
+        <details class="faq">
+          <summary>쿠폰을 어떻게 사용하나요?</summary>
+          <div class="faq-body">
+            전달받은 영수증 쿠폰에 적힌 안내에 따라 패스오더 앱에서 회원가입 후, 첫 주문 시 쿠폰을 적용하시면 자동으로 할인이 적용돼요.
+          </div>
+        </details>
+        <details class="faq">
+          <summary>매장 방문 시 주의할 점이 있나요?</summary>
+          <div class="faq-body">
+            매장 상황에 따라 즉시 응대가 어려울 수 있어요. (피크타임, 매장 내 알바생 부재 등) 이런 경우에는 다음 번에 방문하여 쿠폰을 요청하면 돼요.
+          </div>
+        </details>
+        <details class="faq">
+          <summary>이벤트가 언제 종료되나요?</summary>
+          <div class="faq-body">
+            선착순 이벤트로 조기 마감될 수 있으니, 빠르게 참여해보세요!
+          </div>
+        </details>
+        </div></section>
+
+    </div>
+
+  </div>
+
+  <script>
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      const storeName = params.get('store_name') || '카페 미정';
+      const nickname  = params.get('nickname')   || '닉네임';
+      const code      = params.get('code')       || '0000-0000';
+
+      document.querySelectorAll('[data-store]').forEach(el => { el.textContent = storeName; });
+      document.querySelectorAll('[data-nickname]').forEach(el => { el.textContent = nickname; });
+      document.querySelectorAll('[data-code]').forEach(el => { el.textContent = code; });
+
+      const STAFF_GUIDE_BASE = window.location.origin + window.location.pathname.replace(/customer-guide.*$/, 'staff-guide.html');
+      const staffUrl = `${STAFF_GUIDE_BASE}?store_name=${encodeURIComponent(storeName)}&nickname=${encodeURIComponent(nickname)}&code=${encodeURIComponent(code)}`;
+
+      try {
+        if (typeof QRCode !== 'undefined' && QRCode.toCanvas) {
+          QRCode.toCanvas(staffUrl, {
+            width: 168,
+            margin: 1,
+            color: { dark: '#2A2A2A', light: '#FFFFFF' },
+            errorCorrectionLevel: 'M'
+          }, function (err, canvas) {
+            if (err) {
+              console.error(err);
+              document.getElementById('qrcode').textContent = 'QR 생성 실패';
+              return;
+            }
+            document.getElementById('qrcode').appendChild(canvas);
+          });
+        } else {
+          // 폴백: Google Charts QR API
+          const img = document.createElement('img');
+          img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=168x168&data=' + encodeURIComponent(staffUrl);
+          img.width = 168;
+          img.height = 168;
+          img.alt = 'QR 코드';
+          document.getElementById('qrcode').appendChild(img);
+        }
+      } catch (e) {
+        document.getElementById('qrcode').textContent = 'QR 생성 실패';
+        console.error(e);
+      }
+    })();
+  </script>
+</body>
+</html>
