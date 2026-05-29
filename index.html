@@ -389,6 +389,16 @@
       line-height: 1.65;
     }
     .qr-foot strong { color: var(--text-900); font-weight: 700; }
+    .qr-note {
+      margin: 18px 14px 0;
+      padding: 14px 16px;
+      background: #FFFAEF;
+      border-radius: 12px;
+      font-size: 12.5px;
+      color: var(--text-500);
+      line-height: 1.65;
+      letter-spacing: -0.01em;
+    }
 
     /* ============ 상생 메시지 (흰색 카드) ============ */
     .bonus-card {
@@ -659,7 +669,7 @@
         <h3>3단계로 끝나요</h3>
         <div class="step-row">
           <span class="step-num">1</span>
-          <div class="step-text">매장에 방문해 주세요</div>
+          <div class="step-text"><span data-store>{매장명}</span>에 방문해 주세요</div>
           <div class="step-row-icon">
             <svg viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
               <!-- 매장 -->
@@ -709,16 +719,20 @@
       <section class="card qr-card">
         <span class="qr-tag">알바생에게 이 QR 코드를 보여주세요</span>
         <div class="speech-bubble">
-          <span data-nickname>{알바닉네임}</span> 알바님,<br>
+          <span data-store>{매장명}</span> 알바님,<br>
           <span class="accent">QR 스캔해 주세요!</span>
         </div>
         <div class="qr-frame">
           <div id="qrcode" aria-label="알바용 가이드 QR 코드"></div>
         </div>
         <p class="qr-foot">
-          <strong data-nickname>{알바닉네임}</strong> 알바생이 스캔하면<br>
+          <strong data-store>{매장명}</strong> 알바생이 스캔하면<br>
           쿠폰 발급 방법이 안내돼요
         </p>
+        <div class="qr-note">
+          알바생이 부재 중이거나 다른 분이 응대하시는 경우에도<br>
+          쿠폰을 받으실 수 있도록 매장에 안내했어요
+        </div>
       </section>
 
       <!-- 상생 메시지 -->
@@ -738,7 +752,7 @@
           </svg>
           <div class="bonus-text-wrap">
             <p class="bonus-text">
-              쿠폰을 사용하여 <span data-store>{매장명}</span>에서 패스오더 첫 주문을 하면 '<span data-nickname>{알바닉네임}</span>' 알바도 시급 <span class="accent">1,500원</span>이 추가로 지급돼요
+              고객님이 쿠폰을 사용하여 <span data-store>{매장명}</span>에서 패스오더 첫 주문을 하면 '<span data-nickname>{알바닉네임}</span>' 알바도 시급 <span class="accent">1,500원</span>을 추가로 받을 수 있어요
             </p>
           </div>
         </div>
@@ -770,7 +784,7 @@
         <details class="faq">
           <summary>매장 방문 시 주의할 점이 있나요?</summary>
           <div class="faq-body">
-            매장 상황에 따라 즉시 응대가 어려울 수 있어요. (피크타임, 매장 내 알바생 부재 등) 이런 경우에는 다음 번에 방문하여 쿠폰을 요청하면 돼요.
+            알바생이 부재 중이거나 다른 분이 응대하시는 경우에도 쿠폰을 받으실 수 있도록 매장에 안내해두었어요. 편하게 방문해 주세요.
           </div>
         </details>
         <details class="faq">
@@ -847,7 +861,6 @@
           fetch(TRACKING_URL, {
             method: 'POST',
             mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: data,
             keepalive: true
           }).then(() => {
