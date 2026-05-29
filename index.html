@@ -906,7 +906,6 @@
               return;
             }
             document.getElementById('qrcode').appendChild(canvas);
-            track('QR_RENDERED');
           });
         } else {
           // 폴백: 외부 API
@@ -915,7 +914,6 @@
           img.width = 168;
           img.height = 168;
           img.alt = 'QR 코드';
-          img.onload = function() { track('QR_RENDERED', { fallback: true }); };
           document.getElementById('qrcode').appendChild(img);
         }
       } catch (e) {
